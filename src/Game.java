@@ -3,12 +3,17 @@ import Pieces.*;
 import java.time.Duration;
 import java.util.ArrayList;
 
-public class Main {
+public class Game {
+    //TODO Add Time Mechanic
     public Piece[][] boardState;
     public ArrayList<Piece> piecesTakenByBlack = new ArrayList<>(15);
     public ArrayList<Piece> piecesTakenByWhite = new ArrayList<>(15);
     public Duration timeLeftBlack = Duration.ofMinutes(5);
     public Duration timeLeftWhite = Duration.ofMinutes(5);
+
+    public Game(){
+        resetGame();
+    }
 
     public void clearBoard() {
         boardState = new Piece[8][8];
@@ -79,11 +84,34 @@ public class Main {
 
     public void movePiece(int[] startPosition, int[] targetPosition) {
         Piece pieceToMove = boardState[startPosition[0]][startPosition[1]];
-        pieceToMove.setOtherPieces(getPieces());
+        ArrayList<Piece> allPieces = getPieces();
+        allPieces.remove(pieceToMove);
+        pieceToMove.setOtherPieces(allPieces);
 
-        if (pieceToMove.contains(targetPosition)) {
+        if (pieceToMove.getLegalMoves().contains(targetPosition)) {
+            Piece toBeTaken = findPieceAtPosition(targetPosition);
+            if (toBeTaken != null) {
+                if (toBeTaken.isBlack()) {
+                    piecesTakenByWhite.add(toBeTaken);
+                } else {
+                    piecesTakenByBlack.add(toBeTaken);
+                }
+            }
             boardState[targetPosition[0]][targetPosition[1]] = pieceToMove;
+            pieceToMove.setPosition(targetPosition);
+            boardState[startPosition[0]][startPosition[1]] = null;
         }
+    }
+
+    public Piece findPieceAtPosition(int[] position) {
+        Piece pieceAtPosition;
+        ArrayList<Piece> allPieces = getPieces();
+        for (Piece piece: allPieces) {
+            if (piece.getPosition() == position) {
+                return piece;
+            }
+        }
+        return null;
     }
 
     /**
@@ -102,11 +130,15 @@ public class Main {
         return pieces;
     }
 
-    public boolean isOutOfBounds(int[] position) {
-        for (int i = 0; i < 2; i++) {
-            if (position[i] < 0 || position[i] > 7)
-                return true;
+    public void printBoard(){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (boardState[i][j] != null)
+                    System.out.print(boardState[i][j].getSymbol());
+                else
+                    System.out.print(" ");
+            }
+            System.out.print("\n");
         }
-        return false;
     }
 }

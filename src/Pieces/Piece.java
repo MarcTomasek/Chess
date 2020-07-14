@@ -10,7 +10,7 @@ public abstract class Piece{
     protected PIECE pieceType;
     protected ArrayList<Piece> otherPieces = new ArrayList<>(31);
     protected ArrayList<int[]> legalMoves = new ArrayList<>(28);
-    protected enum PIECE {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
+    protected enum PIECE {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING}
 
     public int[] getPosition() {
         return this.position;
@@ -31,6 +31,10 @@ public abstract class Piece{
     public void setOtherPieces(ArrayList<Piece> otherPieces) {
         this.otherPieces.clear();
         this.otherPieces.addAll(otherPieces);
+    }
+
+    public ArrayList<int[]> getLegalMoves(){
+        return legalMoves;
     }
 
     public static boolean isInBounds(int[] position) {
