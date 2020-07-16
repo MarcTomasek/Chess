@@ -5,11 +5,21 @@ import java.util.ArrayList;
 
 public class Game {
     //TODO Add Time Mechanic
+    //TODO Add Ability to flip board
+    //TODO Add Letters to board-files
+    //TODO Add Numbers to board-rows
+    //TODO Add Clickable GUI Stuff
     public Piece[][] boardState;
     public ArrayList<Piece> piecesTakenByBlack = new ArrayList<>(15);
     public ArrayList<Piece> piecesTakenByWhite = new ArrayList<>(15);
     public Duration timeLeftBlack = Duration.ofMinutes(5);
     public Duration timeLeftWhite = Duration.ofMinutes(5);
+
+    final private ArrayList<int[]> castlingPositions = new ArrayList<>() {{
+        add(new int[]{0, 1});   //Black Queen side
+        add(new int[]{0, 6});   //Black King side
+        add(new int[]{7, 1});   //White Queen side
+        add(new int[]{7, 6}); }};   //White King side
 
     public Game(){
         resetGame();
@@ -26,6 +36,14 @@ public class Game {
                 && piece.getPieceType() != Piece.PIECE.KING);
     }
 
+    public boolean isChecking(int[] position) {
+        //TODO Figure out how to detect checks
+        //TODO Don't allow moves which put in check
+        //TODO Don't allow castling through check
+        //TODO Don't allow discovery checks by moving other pieces
+        return false;
+    }
+
     public static boolean isInBounds(int[] position) {
         for (int i = 0; i < 2; i++) {
             if (position[i] < 0 || position[i] > 7) {
@@ -33,10 +51,6 @@ public class Game {
             }
         }
         return true;
-    }
-
-    public void clearBoard() {
-        boardState = new Piece[8][8];
     }
 
     private void initializeBlackPieces(){
@@ -76,6 +90,7 @@ public class Game {
     }
 
     public void initializeBoard(){
+        boardState = new Piece[8][8];
         initializeEmptySpaces();
         initializeBlackPieces();
         initializeWhitePieces();
@@ -92,7 +107,6 @@ public class Game {
     }
 
     public void resetBoard(){
-        clearBoard();
         initializeBoard();
     }
 
@@ -112,6 +126,26 @@ public class Game {
             //Check for first move
             if (pieceToMove.isFirstMove()) {
                 pieceToMove.setFirstMove(false);
+
+                //Also move Rook when castling
+                if (pieceToMove.getPieceType() == Piece.PIECE.KING
+                        && castlingPositions.contains(targetPosition)) {
+                    int[] rookPos;
+                    int row = pieceToMove.isBlack() ? 0 : 7;
+
+                    //Queen side
+                    if (targetPosition[1] == 1) {
+                        rookPos = new int[]{row, 0};
+                        boardState[0][0].setFirstMove(false);
+                        movePieceToPosition(rookPos, new int[]{row, 2});
+                    }
+                    //King side
+                    if (targetPosition[1] == 6) {
+                        rookPos = new int[]{row, 7};
+                        boardState[0][7].setFirstMove(false);
+                        movePieceToPosition(rookPos, new int[]{row, 5});
+                    }
+                }
             }
 
             //Take
@@ -148,10 +182,6 @@ public class Game {
         } else if (piece.getPieceType() == Piece.PIECE.KING) {
             moves = kingMoves(piece);
         }
-
-        //for (int[] pop: moves) {
-        //    System.out.println(pop[0] + ", " + pop[1]);
-        //}
 
         return moves;
     }
@@ -384,15 +414,13 @@ public class Game {
 
     public ArrayList<int[]> kingMoves(Piece piece) {
         ArrayList<int[]> moves = new ArrayList<>(8);
-        //TODO Add Castling
-        //TODO Don't allow moves which put in check
-        //TODO Don't allow discovery checks from moving other pieces
 
         int[] position = piece.getPosition();
         int yPos = position[0];
         int xPos = position[1];
         int[] newPos;
 
+        //Move
         for (int i = xPos - 1; i <= xPos + 1; i++) {
             for (int j = yPos - 1; j <= yPos + 1; j++) {
                 newPos = new int[]{j, i};
@@ -401,6 +429,23 @@ public class Game {
                         moves.add(newPos);
                     }
                 }
+            }
+        }
+        
+        //Castle
+        if (piece.isFirstMove()) {
+            int row = piece.isBlack() ? 0 : 7;
+            //Queen side
+            if (boardState[row][0].isFirstMove()
+                    && boardState[row][1] == null
+                    && boardState[row][2] == null) {
+                moves.add(new int[]{row,1});
+            }
+            //King side
+            if (boardState[row][7].isFirstMove()
+                    && boardState[row][6] == null
+                    && boardState[row][5] == null) {
+                moves.add(new int[]{row,6});
             }
         }
 

@@ -7,6 +7,5 @@ public class Run {
         Game game = new Game();
         game.printBoard();
         //ArrayList<int[]> list = game.generateMoves(new int[]{7,0});
-
     }
 }
