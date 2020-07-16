@@ -88,7 +88,7 @@ public class Game {
         allPieces.remove(pieceToMove);
         pieceToMove.setOtherPieces(allPieces);
 
-        if (pieceToMove.getLegalMoves().contains(targetPosition)) {
+        if (pieceToMove.getMovablePositions().contains(targetPosition)) {
             Piece toBeTaken = findPieceAtPosition(targetPosition);
             if (toBeTaken != null) {
                 if (toBeTaken.isBlack()) {

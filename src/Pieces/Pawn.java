@@ -12,7 +12,7 @@ public class Pawn extends Piece{
     }
 
     @Override
-    public void setLegalMoves() {
+    public void setMovablePositions() {
         //TODO Add "En Passant" rule
         this.legalMoves.clear();
 

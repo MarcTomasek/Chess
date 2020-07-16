@@ -33,7 +33,7 @@ public abstract class Piece{
         this.otherPieces.addAll(otherPieces);
     }
 
-    public ArrayList<int[]> getLegalMoves(){
+    public ArrayList<int[]> getMovablePositions(){
         return legalMoves;
     }
 
@@ -67,5 +67,5 @@ public abstract class Piece{
         return true;
     }
 
-    public abstract void setLegalMoves();
+    public abstract void setMovablePositions();
 }

@@ -13,7 +13,7 @@ public class King extends Piece{
     }
 
     @Override
-    public void setLegalMoves() {
+    public void setMovablePositions() {
         //TODO Add Castling
         //TODO Don't allow moves which put in check
         //TODO Don't allow discovery checks from moving other pieces

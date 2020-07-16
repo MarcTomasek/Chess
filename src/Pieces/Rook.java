@@ -12,7 +12,7 @@ public class Rook extends Piece{
     }
 
     @Override
-    public void setLegalMoves() {
+    public void setMovablePositions() {
         this.legalMoves.clear();
 
         int[] position = this.getPosition();
